@@ -1,0 +1,144 @@
+# ============================================================
+# DOCUMENTATION (local only — not pushed)
+# ============================================================
+SETUP.md
+ARCHITECTURE.md
+FRONTEND_DESIGN.md
+GOOGLE_MAPS_DEMO_KEY_GUIDE.md
+
+# ============================================================
+# ML MODELS (large binary files)
+# ============================================================
+*.pt
+*.pth
+*.onnx
+*.tflite
+*.pb
+*.index
+backend/app/models_data/
+
+# Root-level model/experiment directories
+damaged_sign_detection/
+rubbish_detection/
+updated_damaged_sign_detection/
+
+# ============================================================
+# PYTHON
+# ============================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+.Python
+.python-version
+
+# Virtual environments
+venv/
+venv_new/
+.venv/
+env/
+ENV/
+
+# Build / distribution
+build/
+dist/
+develop-eggs/
+eggs/
+.eggs/
+wheels/
+sdist/
+lib/
+lib64/
+parts/
+var/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+nosetests.xml
+coverage.xml
+
+# Type checkers
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+
+# Linters
+.ruff_cache/
+
+# Misc Python tools
+.pdm-python
+.pdm-build/
+.pixi
+__pypackages__/
+.abstra/
+ipython_config.py
+profile_default/
+.ipynb_checkpoints
+
+# ============================================================
+# NODE / FRONTEND
+# ============================================================
+frontend/node_modules/
+frontend/dist/
+frontend/.npm
+frontend/package-lock.json
+frontend/yarn.lock
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.local
+
+# ============================================================
+# ENVIRONMENT & SECRETS
+# ============================================================
+.env
+.env.local
+.env.production.local
+.env.development.local
+.env.test.local
+.envrc
+
+# ============================================================
+# DATABASE & TEMP FILES
+# ============================================================
+*.db
+*.sqlite
+*.sqlite3
+detection_results.db
+temp_images/
+uploads/
+logs/
+*.log
+
+# ============================================================
+# OS & EDITOR
+# ============================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+.cursorignore
+.cursorindexingignore
+
+# ============================================================
+# MISC BUILD ARTIFACTS
+# ============================================================
+install_result.txt
+backend/install_result.txt
