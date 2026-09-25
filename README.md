@@ -1,4 +1,4 @@
-# AI Engineer — Object Detection System
+# UrbanEye - Traffic Sign Damage and Rubbish Sites Detection for Smart Cities
 
 A full-stack web application for real-time object detection using YOLO-based models. Supports video frame analysis and Google Maps Street View capture with two detection pipelines:
 
