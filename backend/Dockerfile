@@ -14,9 +14,14 @@ WORKDIR /code
 COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# App + baked-in model checkpoints (~190MB in app/models_data/)
+# App + baked-in model checkpoints (~190MB in app/models_data/).
+# NOTE: *.pt/*.index are gitignored, so hosted builds (Railway/Render)
+# won't have them — entrypoint.sh downloads them from $MODEL_BASE_URL
+# if missing. For local builds with the files present, COPY bakes them in.
 COPY app ./app
+COPY entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
 
 EXPOSE 8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["./entrypoint.sh"]
