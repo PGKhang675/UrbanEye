@@ -74,7 +74,7 @@ interface Props {
 }
 
 export const ExplainPanel: React.FC<Props> = ({
-  imageDataUrl, detection, imageWidth, imageHeight, onClose,
+  imageDataUrl, detection, imageWidth: _imageWidth, imageHeight: _imageHeight, onClose,
 }) => {
   const [activeTab, setActiveTab]   = useState<ActiveTab>('grad_cam')
   const [results, setResults]       = useState<ExplainResult[] | null>(null)
