@@ -32,6 +32,9 @@ function App() {
         console.log('🟢 API Health:', health)
         const modelsResponse = await ModelService.listModels()
         console.log('📦 Models loaded:', modelsResponse)
+        if (!modelsResponse || !Array.isArray((modelsResponse as any).models)) {
+          throw new Error('Unexpected /api/models response (is VITE_API_BASE_URL set to the backend?)')
+        }
         setAvailableModels(modelsResponse)
         if (modelsResponse.count === 0) {
           setAppError('No detection models available. Please check the backend.')

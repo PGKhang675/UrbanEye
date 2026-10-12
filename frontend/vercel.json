@@ -1,1 +1,1 @@
-{"buildCommand": "npm run build", "framework": "vite", "outputDirectory": "dist", "rewrites": [{"destination": "/index.html", "source": "/(.*)"}]}
+{"buildCommand": "npm run build", "framework": "vite", "outputDirectory": "dist", "rewrites": [{"destination": "/index.html", "source": "/((?!api).*)"}]}
