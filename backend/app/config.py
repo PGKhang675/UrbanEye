@@ -27,8 +27,6 @@ class Settings(BaseSettings):
     RUBBISH_STAGE1_MODEL: str = "stage1_best.pt"
     RUBBISH_STAGE2_MODEL: str = "stage2_best.pt"
     TRAFFIC_SIGN_CLASSIFIER_MODEL: str = "EffnetV2_multilabel.pth"
-    TRAFFIC_SIGN_RETRIEVER_INDEX: str = "traffic_signs_3.index"
-    TRAFFIC_SIGN_RETRIEVER_METADATA: str = "traffic_signs_metadata_3.json"
 
     # Image and video uploads
     MAX_IMAGE_SIZE: int = 50 * 1024 * 1024  # 50 MB

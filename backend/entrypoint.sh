@@ -6,7 +6,7 @@ set -e
 MODELS_DIR="/code/app/models_data"
 BASE_URL="${MODEL_BASE_URL:-}"
 
-need="damaged_sign_detection/yolov26_1_class.pt damaged_sign_detection/EffnetV2_multilabel.pth damaged_sign_detection/traffic_signs_3.index damaged_sign_detection/traffic_signs_metadata_3.json rubbish_detection/stage1_best.pt rubbish_detection/stage2_best.pt"
+need="damaged_sign_detection/yolov26_1_class.pt damaged_sign_detection/EffnetV2_multilabel.pth rubbish_detection/stage1_best.pt rubbish_detection/stage2_best.pt"
 
 missing=0
 for f in $need; do

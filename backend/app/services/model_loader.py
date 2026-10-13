@@ -74,14 +74,10 @@ class ModelLoader:
                 from app.services.damaged_sign_pipeline import DamagedSignDetector
 
                 classifier_path = Path(settings.DAMAGED_SIGN_DIR) / settings.TRAFFIC_SIGN_CLASSIFIER_MODEL
-                retriever_index_path = Path(settings.DAMAGED_SIGN_DIR) / settings.TRAFFIC_SIGN_RETRIEVER_INDEX
-                retriever_metadata_path = Path(settings.DAMAGED_SIGN_DIR) / settings.TRAFFIC_SIGN_RETRIEVER_METADATA
 
                 detector = DamagedSignDetector(
                     yolo_path=model_path,
                     classifier_path=classifier_path,
-                    retriever_index_path=retriever_index_path,
-                    retriever_metadata_path=retriever_metadata_path,
                 )
                 self.models[model_name] = detector
                 logger.info(f"Successfully loaded traffic sign detection bundle")

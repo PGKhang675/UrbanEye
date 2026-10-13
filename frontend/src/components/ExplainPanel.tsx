@@ -8,7 +8,7 @@
  */
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { DetectionBox, ExplainResult, XaiMethod } from '../types/detection'
-import { ExplainService, SignInfoService } from '../services/apiClient'
+import { ExplainService } from '../services/apiClient'
 import './ExplainPanel.css'
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -48,20 +48,7 @@ const METHOD_DESCRIPTIONS: Record<XaiMethod, string> = {
   zennit:   'Layer-wise Relevance Propagation — shows how relevance flows through the network.',
 }
 
-/** Human-readable labels for sign info fields */
-const INFO_FIELD_LABELS: Record<string, string> = {
-  'category':                    'Category',
-  'Sign No':                     'Sign No.',
-  'Descriptions':                'Description',
-  'Standard sign?':              'Standard Sign',
-  'Use by council':              'Use by Council',
-  'Legislative Reference':       'Legislative Reference',
-  'Primary Technical Reference': 'Technical Reference',
-  'original_url':                'Source',
-  'name':                        'Name',
-}
-
-type ActiveTab = XaiMethod | 'sign_info'
+type ActiveTab = XaiMethod
 
 // ── component ────────────────────────────────────────────────────────────────
 
@@ -82,20 +69,10 @@ export const ExplainPanel: React.FC<Props> = ({
   const [error, setError]           = useState<string | null>(null)
   const [elapsedMs, setElapsedMs]   = useState<number | null>(null)
 
-  // Sign info tab state
-  const [signInfo, setSignInfo]         = useState<Record<string, string> | null>(null)
-  const [signInfoLoading, setSignInfoLoading] = useState(false)
-  const [signInfoError, setSignInfoError]     = useState<string | null>(null)
+  const method: XaiMethod = activeTab
 
-  const method: XaiMethod | null = activeTab !== 'sign_info' ? activeTab : null
-
-  // ── labels (derived early so effects can reference them) ──
-  const signLabel = detection.label.includes(' | ')
-    ? detection.label.split(' | ')[0]
-    : detection.label
-  const damageLabel = detection.label.includes(' | ')
-    ? detection.label.split(' | ')[1]
-    : ''
+  // ── damage label for the header ──
+  const damageLabel = detection.label
 
   // Preview canvas for the crop thumbnail
   const previewRef = useRef<HTMLCanvasElement>(null)
@@ -154,27 +131,6 @@ export const ExplainPanel: React.FC<Props> = ({
     if (method) runExplanation()
   }, [runExplanation, method])
 
-  const isUnknownSign = signLabel.toLowerCase().includes('unknown')
-
-  // Fetch sign info when Sign Info tab is activated
-  useEffect(() => {
-    if (activeTab !== 'sign_info') return
-    if (isUnknownSign) return
-    if (signInfo || signInfoLoading) return
-    setSignInfoLoading(true)
-    setSignInfoError(null)
-    SignInfoService.lookup(signLabel)
-      .then((data) => setSignInfo(data))
-      .catch((err) => {
-        setSignInfoError(
-          err?.response?.data?.detail ??
-          err?.message ??
-          'Could not load sign information.'
-        )
-      })
-      .finally(() => setSignInfoLoading(false))
-  }, [activeTab, signLabel, signInfo, signInfoLoading])
-
   // Close on Escape key
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
@@ -194,15 +150,12 @@ export const ExplainPanel: React.FC<Props> = ({
 
         {/* ── Header ── */}
         <div className="xai-header">
-          <div className="xai-header-info">
-            <span className="xai-header-title">Explain Detection</span>
-            {signLabel && (
-              <span className="xai-header-sign">{signLabel}</span>
-            )}
-            {damageLabel && (
-              <span className="xai-header-damage">{damageLabel}</span>
-            )}
-          </div>
+            <div className="xai-header-info">
+              <span className="xai-header-title">Explain Detection</span>
+              {damageLabel && (
+                <span className="xai-header-damage">{damageLabel}</span>
+              )}
+            </div>
           <button className="xai-close" onClick={onClose} aria-label="Close">✕</button>
         </div>
 
@@ -231,15 +184,6 @@ export const ExplainPanel: React.FC<Props> = ({
                     {METHOD_LABELS[m]}
                   </button>
                 ))}
-                <button
-                  role="tab"
-                  aria-selected={activeTab === 'sign_info'}
-                  className={`xai-method-tab xai-method-tab--info${activeTab === 'sign_info' ? ' active' : ''}`}
-                  onClick={() => setActiveTab('sign_info')}
-                  disabled={loading}
-                >
-                  Sign Info
-                </button>
               </div>
               {method && (
                 <p className="xai-method-desc">{METHOD_DESCRIPTIONS[method]}</p>
@@ -254,76 +198,8 @@ export const ExplainPanel: React.FC<Props> = ({
           {/* Right column: results */}
           <div className="xai-results">
 
-            {/* ── Sign Info tab ── */}
-            {activeTab === 'sign_info' && (
-              <>
-                {isUnknownSign && (
-                  <div className="xai-empty">
-                    <span className="xai-empty-icon">?</span>
-                    <p>Sign type could not be identified.</p>
-                    <p className="xai-method-desc">
-                      The retrieval model did not find a confident match for this sign
-                      in the database. Try a clearer or closer image of the sign.
-                    </p>
-                  </div>
-                )}
-
-                {!isUnknownSign && signInfoLoading && (
-                  <div className="xai-loading">
-                    <div className="xai-spinner" />
-                    <p>Loading sign information…</p>
-                  </div>
-                )}
-
-                {signInfoError && !signInfoLoading && (
-                  <div className="xai-error">
-                    <span className="xai-error-icon">⚠</span>
-                    <p>{signInfoError}</p>
-                    <button
-                      className="xai-retry-btn"
-                      onClick={() => { setSignInfoError(null); setSignInfo(null) }}
-                    >
-                      Retry
-                    </button>
-                  </div>
-                )}
-
-                {signInfo && !signInfoLoading && (
-                  <div className="xai-info-panel">
-                    <dl className="xai-info-table">
-                      {Object.entries(INFO_FIELD_LABELS).map(([key, label]) => {
-                        const value = signInfo[key]
-                        if (!value || value === '-' || value === 'Unavailable') return null
-                        const isUrl = key === 'original_url'
-                        return (
-                          <div key={key} className="xai-info-row">
-                            <dt className="xai-info-key">{label}</dt>
-                            <dd className="xai-info-val">
-                              {isUrl ? (
-                                <a
-                                  className="xai-info-link"
-                                  href={value}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  View on Transport NSW ↗
-                                </a>
-                              ) : (
-                                value
-                              )}
-                            </dd>
-                          </div>
-                        )
-                      })}
-                    </dl>
-                  </div>
-                )}
-              </>
-            )}
-
-            {/* ── XAI tabs ── */}
-            {activeTab !== 'sign_info' && (
-              <>
+            {/* ── XAI results ── */}
+            {(<>
                 {loading && (
                   <div className="xai-loading">
                     <div className="xai-spinner" />

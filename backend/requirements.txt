@@ -27,10 +27,6 @@ opencv-python>=4.10.0
 
 # Damaged sign detection dependencies
 ultralytics>=8.0.0
-transformers>=4.47.0
-tokenizers>=0.21
-sentence-transformers>=3.0.0
-faiss-cpu>=1.7.4
 
 # Explainable AI (XAI) — required for /api/explain
 matplotlib>=3.7.0

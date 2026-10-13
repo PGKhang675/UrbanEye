@@ -1,14 +1,13 @@
 """
 Two-stage damaged traffic sign detection pipeline.
 
-This module loads all assets needed for the damaged sign model and provides
-an inference method that returns detections suitable for the API.
+Stage 1 (YOLO) locates traffic signs; stage 2 (EfficientNetV2) predicts
+damage labels for each cropped sign.
 """
 from __future__ import annotations
 
-import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List
 
 import numpy as np
 from PIL import Image, ImageFilter
@@ -30,7 +29,6 @@ CLASSIFIER_THRESHOLDS = [0.65, 0.7, 0.75, 0.75, 0.8, 0.9, 0.75, 0.85]
 
 NORMAL_CLASS_IDX = CLASS_NAMES.index("normal")
 
-RETRIEVER_THRESHOLD = 0.82
 YOLO_CONFIDENCE_THRESHOLD = 0.5
 YOLO_PREDICT_CONF = 0.2
 YOLO_IMG_SIZE = 640
@@ -55,45 +53,6 @@ def preprocess_for_live_feed(img: Image.Image) -> Image.Image:
     new_img.paste(img, upper_left)
 
     return new_img
-
-
-def load_retriever(index_path: Path, metadata_path: Path):
-    """Load FAISS index and clip retriever metadata."""
-    try:
-        import faiss
-        from sentence_transformers import SentenceTransformer
-    except ImportError as e:
-        raise ImportError(
-            "Missing dependencies for damaged sign retriever. "
-            "Install faiss-cpu and sentence-transformers."
-        ) from e
-
-    index = faiss.read_index(str(index_path))
-    clip_model = SentenceTransformer("clip-ViT-B-32")
-    with open(metadata_path, "r", encoding="utf-8") as f:
-        metadata = json.load(f)
-
-    return index, clip_model, metadata
-
-
-def get_sign_metadata(crop_pil: Image.Image, retriever_assets: Tuple[Any, Any, List[Dict[str, Any]]]):
-    """Retrieve sign metadata using CLIP embeddings and FAISS search."""
-    index, clip_model, metadata = retriever_assets
-    processed_img = preprocess_for_live_feed(crop_pil)
-    query_vector = clip_model.encode(processed_img).astype("float32").reshape(1, -1)
-
-    import faiss
-
-    faiss.normalize_L2(query_vector)
-    distances, indices = index.search(query_vector, 1)
-
-    dist = float(distances[0][0])
-    idx = int(indices[0][0])
-
-    if dist < RETRIEVER_THRESHOLD or idx < 0 or idx >= len(metadata):
-        return {"Sign No": "Unknown", "Descriptions": "Unknown Sign Type"}, dist
-
-    return metadata[idx], dist
 
 
 def load_effnetv2_multilabel(model_path: Path, device=None):
@@ -174,14 +133,12 @@ def predict_crop(crop_pil: Image.Image, model, device, thresholds=None):
 
 
 class DamagedSignDetector:
-    """Wraps the two-stage damaged traffic sign model and retrieval assets."""
+    """Two-stage damaged traffic sign model: YOLO detection + damage classification."""
 
     def __init__(
         self,
         yolo_path: Path,
         classifier_path: Path,
-        retriever_index_path: Path,
-        retriever_metadata_path: Path,
     ):
         try:
             from ultralytics import YOLO
@@ -193,7 +150,6 @@ class DamagedSignDetector:
         self.device = "cuda" if __import__("torch").cuda.is_available() else "cpu"
         self.yolo = YOLO(str(yolo_path))
         self.classifier = load_effnetv2_multilabel(classifier_path)
-        self.retriever_assets = load_retriever(retriever_index_path, retriever_metadata_path)
 
     def infer(self, image_array: np.ndarray) -> List[Dict[str, Any]]:
         """Run inference on a BGR image and return detection boxes.
@@ -243,10 +199,7 @@ class DamagedSignDetector:
             else:
                 damage_label = ", ".join([name for name, _ in damage_preds])
 
-            sign_info, _ = get_sign_metadata(crop_pil, self.retriever_assets)
-            sign_label = sign_info.get("Descriptions", "Unknown Sign Type")
-
-            label = f"{sign_label} | {damage_label}"
+            label = damage_label
             detections.append(
                 {
                     "x_min": float(x1),
