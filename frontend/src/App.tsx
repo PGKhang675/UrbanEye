@@ -52,7 +52,7 @@ function App() {
   if (isInitializing) {
     return (
       <div className="app app--loading">
-        <LoadingSpinner message="Initializing Detection Studio…" size="large" />
+        <LoadingSpinner message="Initializing UrbanEye - Smart City Monitoring…" size="large" />
       </div>
     )
   }
@@ -65,7 +65,7 @@ function App() {
           {/* Brand */}
           <div className="header-brand">
             <div className="brand-dot" aria-hidden="true" />
-            <span className="brand-name">Detection Studio</span>
+            <span className="brand-name">UrbanEye - Smart City Monitoring</span>
           </div>
 
           {/* Tab navigation */}
@@ -178,7 +178,7 @@ function App() {
       </main>
 
       <footer className="app-footer">
-        <p>Detection Studio &nbsp;·&nbsp; React + FastAPI</p>
+        <p>UrbanEye - Smart City Monitoring &nbsp;·&nbsp; React + FastAPI</p>
       </footer>
     </div>
   )

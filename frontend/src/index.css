@@ -1,32 +1,32 @@
 /* ============================================================
-   DESIGN TOKENS — Dark Minimalist Theme
+   DESIGN TOKENS — Light Minimalist Theme
    ============================================================ */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
   /* ── Backgrounds ─────────────────────────────────────────── */
-  --bg-base:      #0a0a0b;
-  --bg-surface:   #111113;
-  --bg-elevated:  #1c1c1f;
-  --bg-subtle:    #27272a;
-  --bg-overlay:   rgba(0, 0, 0, 0.65);
+  --bg-base:      #f4f4f5;
+  --bg-surface:   #ffffff;
+  --bg-elevated:  #f4f4f5;
+  --bg-subtle:    #e4e4e7;
+  --bg-overlay:   rgba(0, 0, 0, 0.45);
 
   /* ── Borders ─────────────────────────────────────────────── */
-  --border:       #27272a;
-  --border-light: #3f3f46;
+  --border:       #e4e4e7;
+  --border-light: #d4d4d8;
 
   /* ── Text ────────────────────────────────────────────────── */
-  --text-primary:   #fafafa;
-  --text-secondary: #a1a1aa;
-  --text-tertiary:  #71717a;
-  --text-inverse:   #09090b;
+  --text-primary:   #18181b;
+  --text-secondary: #52525b;
+  --text-tertiary:  #a1a1aa;
+  --text-inverse:   #fafafa;
 
   /* ── Accent — electric blue, used sparingly ──────────────── */
-  --accent:         #3b82f6;
-  --accent-hover:   #2563eb;
-  --accent-active:  #1d4ed8;
-  --accent-surface: rgba(59, 130, 246, 0.08);
-  --accent-border:  rgba(59, 130, 246, 0.35);
+  --accent:         #2563eb;
+  --accent-hover:   #1d4ed8;
+  --accent-active:  #1e40af;
+  --accent-surface: rgba(37, 99, 235, 0.08);
+  --accent-border:  rgba(37, 99, 235, 0.35);
 
   /* ── Semantic ────────────────────────────────────────────── */
   --success:         #22c55e;
@@ -49,9 +49,9 @@
   --r-full: 9999px;
 
   /* ── Shadows ─────────────────────────────────────────────── */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.65);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.16);
 
   /* ── Transitions ─────────────────────────────────────────── */
   --t-fast: 120ms ease;
@@ -59,7 +59,7 @@
 
   /* ── Typography ──────────────────────────────────────────── */
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 /* ============================================================

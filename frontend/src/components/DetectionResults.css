@@ -342,7 +342,7 @@
 .btn-explain:hover {
   background: var(--accent);
   border-color: var(--accent);
-  color: #000;
+  color: #fff;
 }
 
 /* ============================================================
