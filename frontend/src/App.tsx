@@ -41,7 +41,8 @@ function App() {
         }
       } catch (error: any) {
         console.error('❌ Initialization error:', error)
-        setAppError(`Failed to initialize: ${error.message}. Make sure the backend is running on http://localhost:8000`)
+        const apiBase = import.meta.env.VITE_API_BASE_URL || '(same-origin /api)'
+        setAppError(`Failed to initialize: ${error.message}. Backend base: ${apiBase}`)
       } finally {
         setIsInitializing(false)
       }
